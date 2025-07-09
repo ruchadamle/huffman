@@ -1,34 +1,45 @@
 #include <iostream>
+#include <string>
 #include "Huffman.h"
 
-using namespace std;
+/**
+ * Prints how to use command to user
+ */
+void printInstructions() {
+    std::cout << "How to use:\n"
+              << "huffman compress <input_file> <output_file>\n"
+              << "huffman decompress <input_file> <output_file>\n";
+}
 
-int main() {
-    Huffman *compressor = new Huffman();
-    int choice = 0;
-    string in_file, out_file;
+int main(int argc, char* argv[]) {
+    // if incorrect number of args provided, show how to use command
+    if (argc != 4) {
+        printInstructions();
+        return 1;
+    }
 
-    cout << "Would you like to:" << endl
-         << "1) Compress a file" << endl
-         << "2) Decompress a file" << endl;
+    // either compress or decompress
+    std::string command = argv[1];
+    std::string input_file = argv[2];
+    std::string output_file = argv[3];
 
-    cin >> choice;
-    if (1 == choice) {
-        cout << "Enter the path of the file to be compressed: ";
-        cin >> in_file;
-        cout << "Enter the path where you'd like the compressed file to be saved: ";
-        cin >> out_file;
-        compressor->compress(in_file, out_file);
+    Huffman huffman;
 
-    } else if (2 == choice) {
-        cout << "Enter the path of the file to be decompressed: ";
-        cin >> in_file;
-        cout << "Enter the path where you'd like the decompressed file to be saved: ";
-        cin >> out_file;
-        compressor->decompress(in_file, out_file);
-
-    } else {
-        cout << "That is not a valid choice." << endl;
+    try {
+        if (command == "compress") {
+            huffman.compress(input_file, output_file);
+            std::cout << "Compression completed: " << output_file << std::endl;
+        } else if (command == "decompress") {
+            huffman.decompress(input_file, output_file);
+            std::cout << "Decompression completed: " << output_file << std::endl;
+        } else {
+            std::cerr << "Unknown command: " << command << "\n";
+            printInstructions();
+            return 1;
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << "\n";
+        return 1;
     }
 
     return 0;
